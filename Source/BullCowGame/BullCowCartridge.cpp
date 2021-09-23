@@ -5,12 +5,10 @@
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
-
+    TArray<FString> ValidWords = GetValidWords(WordList);
     SetupGame();
-
     PrintLine(TEXT("The number of possible words is %i"), WordList.Num());
-
-    // PrintLine(TEXT("The HiddenWord is: %s. \n"), *HiddenWord);  // Debug Line
+    PrintLine(TEXT("The number of valid words is %i"), ValidWords.Num());
 }
 
 void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
@@ -84,27 +82,27 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
 bool UBullCowCartridge::IsIsogram(FString Word) const
 {
-    int32 Index = 0;
-    int32 Comparison = Index + 1;
+    // int32 Index = 0;
+    // int32 Comparison = Index + 1;
 
-    for (; Comparison < Word.Len(); Index++)
-    {
-        if (Word[Index] == Word[Comparison])
-        {
-            return false;
-        }
-    }
-
-    // for (int32 Index = 0; Index < Word.Len(); Index++)
+    // for (; Comparison < Word.Len(); Index++)
     // {
-    //     for (int32 Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
+    //     if (Word[Index] == Word[Comparison])
     //     {
-    //         if (Word[Index] == Word[Comparison])
-    //         {
-    //             return false;
-    //         }
+    //         return false;
     //     }
     // }
+
+    for (int32 Index = 0; Index < Word.Len(); Index++)
+    {
+        for (int32 Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
+        {
+            if (Word[Index] == Word[Comparison])
+            {
+                return false;
+            }
+        }
+    }
 
     // for each letter
     // start at element 0
@@ -113,4 +111,24 @@ bool UBullCowCartridge::IsIsogram(FString Word) const
     // if any are the same return false
 
     return true;
+}
+
+TArray<FString> UBullCowCartridge::GetValidWords(TArray<FString> WordList) const
+{
+    TArray<FString> ValidWords;
+
+    for (FString Word : WordList)
+    {
+        if (Word.Len() >= 4 && Word.Len() <= 8 && IsIsogram(Word))
+        {
+            ValidWords.Emplace(Word);
+        }
+    }
+
+    // for (int32 Index = 0; Index < ValidWords.Num(); Index++)
+    // {
+    //     PrintLine(TEXT("%s"), *ValidWords[Index]);
+    // }
+
+    return ValidWords;
 }
